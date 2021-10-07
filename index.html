@@ -34,6 +34,7 @@
 		let secondHand = new THREE.Group();
 		let mesh;
 		let text = '高等計算機圖學作業';
+		let plyloadstatus = 0;
 		const height = 20,
 			size = 70,
 			hover = 30,
@@ -218,6 +219,7 @@
 				if (intersects.length > 0) {
 					window.open(intersects[0].object.userData.URL);
 				}
+
 			}
 		}
 		window.addEventListener('mousemove', onMouseMove, false);
@@ -414,25 +416,29 @@
 
 				mesh.position.y = 280;
 				mesh.position.z = 200;
-				mesh.rotation.y = - Math.PI ;
+				mesh.rotation.y = - Math.PI;
 				mesh.scale.multiplyScalar(0.1);
 
 				mesh.castShadow = true;
 				mesh.receiveShadow = true;
 
 				scene.add(mesh);
+				plyloadstatus = 1;
 
 			});
 		}
 		function animate() {
 
 			requestAnimationFrame(animate);
-			if(mesh.position.x<1000){
-				mesh.position.x+=3;
+			if (plyloadstatus == 1) {
+				if (mesh.position.x < 1000) {
+					mesh.position.x += 3;
+				}
+				else {
+					mesh.position.x = -1000;
+				}
 			}
-			else{
-				mesh.position.x=-1000;
-			}
+
 			//group.rotation.y += ( targetRotation - group.rotation.y ) * 0.05;
 			let date = new Date();
 			let hours = date.getHours();
