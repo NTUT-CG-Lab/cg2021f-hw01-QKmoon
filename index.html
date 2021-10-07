@@ -88,11 +88,11 @@
 
 			group = new THREE.Group();
 			group.position.y = 100;
-			group1 = new THREE.Group();
-			group1.position.x = 0;
-			group1.position.y = 280;
+			group_clock_text = new THREE.Group();
+			group_clock_text.position.x = 0;
+			group_clock_text.position.y = 280;
 			scene.add(group);
-			scene.add(group1);
+			scene.add(group_clock_text);
 
 			const loader = new THREE.TTFLoader();
 
@@ -207,7 +207,7 @@
 			mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
 			document.onclick = function () {
 				raycaster.setFromCamera(mouse, camera);
-				var intersects = raycaster.intersectObjects(group1.children);
+				var intersects = raycaster.intersectObjects(group_clock_text.children);
 				if (intersects.length > 0) {
 					window.open(intersects[0].object.userData.URL);
 				}
@@ -334,7 +334,7 @@
 				textMesh_clock.position.y = centerOffsetY + 130 * Math.sin(THREE.MathUtils.degToRad(30 * -i + 90));
 				textMesh_clock.position.z = 1;
 				textMesh_clock.userData = { URL: clockUrl[i] };
-				group1.add(textMesh_clock);
+				group_clock_text.add(textMesh_clock);
 			}
 		}
 		function onPointerDown(event) {
