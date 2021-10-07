@@ -28,7 +28,9 @@
 		let group, textMesh1, textMesh2, textGeo, material;
 		let textMesh_clock, textclockGeo;
 		let firstLetter = true;
-
+		let hourHand=new THREE.Group();
+		let minuteHand=new THREE.Group();
+		let secondHand=new THREE.Group();
 		let text = '高等計算機圖學作業';
 		const height = 20,
 			size = 70,
@@ -93,6 +95,8 @@
 			group_clock_text.position.y = 280;
 			scene.add(group);
 			scene.add(group_clock_text);
+			// clock
+			scene.add(createClock());
 
 			const loader = new THREE.TTFLoader();
 
@@ -198,7 +202,7 @@
 			}
 
 		}
-		
+
 		const raycaster = new THREE.Raycaster();
 		const mouse = new THREE.Vector2();
 
@@ -369,13 +373,51 @@
 		}
 
 		//
+		function createClock() {
+			let clockRadius = 110;
+			let clockGroup = new THREE.Group();
+			clockGroup.position.x = 0;
+			clockGroup.position.y = 280;
 
+			let hourHandGeometry = new THREE.BoxGeometry(clockRadius-40, 5, 5);
+			let hourHandMesh = new THREE.Mesh(hourHandGeometry, material);
+			hourHandMesh.position.x = (clockRadius-40) / 2;
+			hourHand.add( hourHandMesh );
+			clockGroup.add(hourHand);
+
+			let minuteHandGeometry = new THREE.BoxGeometry(clockRadius-20, 2.5, 2.5);
+			let minuteHandMesh = new THREE.Mesh(minuteHandGeometry, material);
+			minuteHandMesh.position.x = (clockRadius-20) / 2 ;
+
+			minuteHand.add( minuteHandMesh );
+			clockGroup.add(minuteHand);
+
+			let secondHandGeometry = new THREE.BoxGeometry(clockRadius, 1.25, 1.25);
+			let secondHandMesh = new THREE.Mesh(secondHandGeometry, material);
+			secondHandMesh.position.x = (clockRadius / 2) ;
+
+			secondHand.add( secondHandMesh );
+			clockGroup.add(secondHand);
+			return clockGroup;
+		}
 		function animate() {
 
 			requestAnimationFrame(animate);
 
 			//group.rotation.y += ( targetRotation - group.rotation.y ) * 0.05;
-
+			let date = new Date();
+			let hours = date.getHours();
+			let minutes = date.getMinutes();
+			let seconds = date.getSeconds();
+			let milliseconds = date.getMilliseconds();
+			let smoothSeconds = seconds + (milliseconds / 1000);
+			minutes = minutes + (smoothSeconds / 60);
+			// hours=24;
+			// minutes=00;
+			// smoothSeconds=00;
+			hourHand.rotation.z = -THREE.MathUtils.degToRad( 0.5 * ( (60 * hours) + minutes ) -90);
+			minuteHand.rotation.z = -THREE.MathUtils.degToRad( 6 * minutes -90);
+			secondHand.rotation.z = -THREE.MathUtils.degToRad( 6 * smoothSeconds -90);
 			camera.lookAt(cameraTarget);
 
 			renderer.render(scene, camera);
