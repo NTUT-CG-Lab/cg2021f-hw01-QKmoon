@@ -14,23 +14,25 @@
 		<br />type to enter new text, drag to spin the text
 	</div>
 
-	<script src="./opentype.min.js"></script>
-	<script src="./three.min.js"></script>
-	<script src="./TTFLoader.js"></script>
 
-	<script>
+
+	<script type="module">
+
+		import * as THREE from './build/three.module.js';
+		import { TTFLoader } from './jsm/loaders/TTFLoader.js';
+		import { PLYLoader } from './jsm/loaders/PLYLoader.js';
 
 		var fontttf = "edukai-4.0.ttf";
-
-
 		let container;
 		let camera, cameraTarget, scene, renderer;
 		let group, textMesh1, textMesh2, textGeo, material;
 		let textMesh_clock, textclockGeo;
+		let group_clock_text;
 		let firstLetter = true;
-		let hourHand=new THREE.Group();
-		let minuteHand=new THREE.Group();
-		let secondHand=new THREE.Group();
+		let hourHand = new THREE.Group();
+		let minuteHand = new THREE.Group();
+		let secondHand = new THREE.Group();
+		let mesh;
 		let text = '高等計算機圖學作業';
 		const height = 20,
 			size = 70,
@@ -97,8 +99,9 @@
 			scene.add(group_clock_text);
 			// clock
 			scene.add(createClock());
+			ply();
 
-			const loader = new THREE.TTFLoader();
+			const loader = new TTFLoader();
 
 			loader.load(fontttf, function (json) {
 				console.log(json)
@@ -379,31 +382,57 @@
 			clockGroup.position.x = 0;
 			clockGroup.position.y = 280;
 
-			let hourHandGeometry = new THREE.BoxGeometry(clockRadius-40, 5, 5);
+			let hourHandGeometry = new THREE.BoxGeometry(clockRadius - 40, 5, 5);
 			let hourHandMesh = new THREE.Mesh(hourHandGeometry, material);
-			hourHandMesh.position.x = (clockRadius-40) / 2;
-			hourHand.add( hourHandMesh );
+			hourHandMesh.position.x = (clockRadius - 40) / 2;
+			hourHand.add(hourHandMesh);
 			clockGroup.add(hourHand);
 
-			let minuteHandGeometry = new THREE.BoxGeometry(clockRadius-20, 2.5, 2.5);
+			let minuteHandGeometry = new THREE.BoxGeometry(clockRadius - 20, 2.5, 2.5);
 			let minuteHandMesh = new THREE.Mesh(minuteHandGeometry, material);
-			minuteHandMesh.position.x = (clockRadius-20) / 2 ;
+			minuteHandMesh.position.x = (clockRadius - 20) / 2;
 
-			minuteHand.add( minuteHandMesh );
+			minuteHand.add(minuteHandMesh);
 			clockGroup.add(minuteHand);
 
 			let secondHandGeometry = new THREE.BoxGeometry(clockRadius, 1.25, 1.25);
 			let secondHandMesh = new THREE.Mesh(secondHandGeometry, material);
-			secondHandMesh.position.x = (clockRadius / 2) ;
+			secondHandMesh.position.x = (clockRadius / 2);
 
-			secondHand.add( secondHandMesh );
+			secondHand.add(secondHandMesh);
 			clockGroup.add(secondHand);
 			return clockGroup;
+		}
+		function ply() {
+			const loader = new PLYLoader();
+			loader.load('./model/ply/ascii/dolphins.ply', function (geometry) {
+
+				geometry.computeVertexNormals();
+
+				const material = new THREE.MeshStandardMaterial({ color: 0x0055ff, flatShading: true });
+				mesh = new THREE.Mesh(geometry, material);
+
+				mesh.position.y = 280;
+				mesh.position.z = 200;
+				mesh.rotation.y = - Math.PI ;
+				mesh.scale.multiplyScalar(0.1);
+
+				mesh.castShadow = true;
+				mesh.receiveShadow = true;
+
+				scene.add(mesh);
+
+			});
 		}
 		function animate() {
 
 			requestAnimationFrame(animate);
-
+			if(mesh.position.x<1000){
+				mesh.position.x+=3;
+			}
+			else{
+				mesh.position.x=-1000;
+			}
 			//group.rotation.y += ( targetRotation - group.rotation.y ) * 0.05;
 			let date = new Date();
 			let hours = date.getHours();
@@ -415,9 +444,9 @@
 			// hours=24;
 			// minutes=00;
 			// smoothSeconds=00;
-			hourHand.rotation.z = -THREE.MathUtils.degToRad( 0.5 * ( (60 * hours) + minutes ) -90);
-			minuteHand.rotation.z = -THREE.MathUtils.degToRad( 6 * minutes -90);
-			secondHand.rotation.z = -THREE.MathUtils.degToRad( 6 * smoothSeconds -90);
+			hourHand.rotation.z = -THREE.MathUtils.degToRad(0.5 * ((60 * hours) + minutes) - 90);
+			minuteHand.rotation.z = -THREE.MathUtils.degToRad(6 * minutes - 90);
+			secondHand.rotation.z = -THREE.MathUtils.degToRad(6 * smoothSeconds - 90);
 			camera.lookAt(cameraTarget);
 
 			renderer.render(scene, camera);
