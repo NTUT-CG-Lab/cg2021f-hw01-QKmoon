@@ -9,10 +9,7 @@
 </head>
 
 <body>
-	<div id="info">
-		<a href="https://threejs.org" target="_blank" rel="noopener">three.js</a> - TTFLoader using opentype by gero3
-		<br />type to enter new text, drag to spin the text
-	</div>
+	<div id="info"></div>
 	<script src="scoreoutputer.min.js"></script>
 
 	<script>
@@ -59,7 +56,7 @@
 			//產生 "開啟自評表按鈕"
 			so.renderBtn(
 				//自評表按鈕插入位置
-				document.body,
+				document.querySelector("#info"),
 				//自評表按鈕文字
 				"開啟自評表"
 			);
